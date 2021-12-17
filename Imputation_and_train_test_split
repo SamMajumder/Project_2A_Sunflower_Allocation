@@ -1,0 +1,38 @@
+### choose the file "Sunflower"
+
+### IMPUTE THE DATA ### 
+
+data <- read.csv("Sunflower.csv")
+
+######
+
+## converting the Species column into a factor ####
+
+data$Species <- factor(data$Species)
+
+### converting the data as "." to NA values 
+
+data[data=="."] <- NA
+
+### Converting all character columns as numeric ##
+
+library(tidyverse)
+
+data <- data %>% mutate_if(is.character,as.numeric)
+
+### create partition in the dataset ## train and test ###
+
+library(lattice)
+library(ggplot2)
+library(caret)
+
+s <- createDataPartition(y=data$Species, p=0.70, list = F)
+train <- data[s,]
+test <- data[-s,]
+
+### Imputing data by rfImpute #### 
+
+library(randomForest)
+
+train_imputed <- rfImpute(Species~., data = train)
+test_imputed <- rfImpute(Species~., data = test) 
